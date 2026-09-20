@@ -18,7 +18,7 @@ const bodyFont = Manrope({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.3netra.in";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.3netra.in";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
