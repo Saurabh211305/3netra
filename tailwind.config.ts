@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        onyx: "#000000",
+        onyx: "#111111",
         charcoal: "#111111",
         pine: {
           DEFAULT: "#0F3D3A",
@@ -17,7 +17,7 @@ const config: Config = {
           light: "#C79A9A",
           dark: "#8F5E5E",
         },
-        pearl: "#F9EBE5",
+        pearl: "#F7F4EF",
         white: "#FFFFFF",
         grey: {
           soft: "#6B6B6B",

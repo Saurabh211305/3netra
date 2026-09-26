@@ -46,7 +46,7 @@ export function Navbar() {
     >
       <Container className="flex h-20 items-center justify-between">
         <a href="#top" aria-label="3NETRA home">
-          <Logo tone="dark" />
+          <Logo tone={scrolled ? "dark" : "light"} />
         </a>
 
         <nav aria-label="Primary" className="hidden items-center gap-9 lg:flex">
@@ -54,7 +54,10 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-onyx/75 transition-colors hover:text-onyx"
+              className={clsx(
+                "text-sm font-medium transition-colors",
+                scrolled ? "text-onyx/75 hover:text-onyx" : "text-white/80 hover:text-white"
+              )}
             >
               {link.label}
             </a>
@@ -64,7 +67,7 @@ export function Navbar() {
         <div className="hidden lg:block">
           <Button
             href="#security-audit"
-            variant="primary"
+            variant={scrolled ? "primary" : "solid-ivory"}
             className="py-3 text-[0.8rem]"
             onClick={() => trackEvent("hero_cta_click", { source: "navbar" })}
           >
@@ -77,7 +80,10 @@ export function Navbar() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-onyx/15 lg:hidden"
+          className={clsx(
+            "flex h-10 w-10 items-center justify-center rounded-full border lg:hidden",
+            scrolled ? "border-onyx/15 text-onyx" : "border-white/25 text-white"
+          )}
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>

@@ -4,16 +4,28 @@ import { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 import { ArrowRight } from "lucide-react";
 import clsx from "clsx";
 
-type Variant = "primary" | "secondary" | "ghost-dark" | "ghost-light";
+type Variant =
+  | "primary"
+  | "secondary"
+  | "ghost-dark"
+  | "ghost-light"
+  | "solid-ivory"
+  | "underline-light";
 
 const base =
-  "group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300 ease-premium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4";
+  "group inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold tracking-wide transition-all duration-300 ease-premium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-pine text-pearl hover:bg-pine-light",
-  secondary: "bg-onyx text-white hover:bg-charcoal",
-  "ghost-dark": "border border-onyx/25 text-onyx hover:border-onyx hover:bg-onyx hover:text-white",
-  "ghost-light": "border border-white/35 text-white hover:border-white hover:bg-white hover:text-onyx",
+  primary: "rounded-full px-7 py-3.5 bg-pine text-pearl hover:bg-pine-light",
+  secondary: "rounded-full px-7 py-3.5 bg-onyx text-white hover:bg-charcoal",
+  "ghost-dark":
+    "rounded-full px-7 py-3.5 border border-onyx/25 text-onyx hover:border-onyx hover:bg-onyx hover:text-white",
+  "ghost-light":
+    "rounded-full px-7 py-3.5 border border-white/35 text-white hover:border-white hover:bg-white hover:text-onyx",
+  /* Editorial, non-pill treatments reserved for the cinematic hero. */
+  "solid-ivory": "rounded-[2px] px-8 py-4 bg-pearl text-onyx hover:bg-white",
+  "underline-light":
+    "rounded-none border-b border-white/40 px-0 py-2 text-white hover:border-white",
 };
 
 interface CommonProps {
