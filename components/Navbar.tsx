@@ -2,19 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, Phone, X } from "lucide-react";
 import clsx from "clsx";
 import { Logo } from "./Logo";
 import { Button } from "./Button";
 import { Container } from "./Container";
+import { CONTACT } from "@/lib/contact";
 import { trackEvent } from "@/lib/analytics";
 
 const NAV_LINKS = [
   { label: "Solutions", href: "#solutions" },
   { label: "Industries", href: "#industries" },
   { label: "Technology", href: "#intelligent-surveillance" },
-  { label: "How It Works", href: "#process" },
-  { label: "Security Audit", href: "#security-audit" },
+  { label: "Our Approach", href: "#process" },
+  { label: "Resources", href: "#security-audit" },
 ];
 
 export function Navbar() {
@@ -46,7 +47,7 @@ export function Navbar() {
     >
       <Container className="flex h-20 items-center justify-between">
         <a href="#top" aria-label="3NETRA home">
-          <Logo tone={scrolled ? "dark" : "light"} />
+          <Logo />
         </a>
 
         <nav aria-label="Primary" className="hidden items-center gap-9 lg:flex">
@@ -64,14 +65,25 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-6 lg:flex">
+          <a
+            href={CONTACT.phoneHref}
+            onClick={() => trackEvent("phone_click", { source: "navbar" })}
+            className={clsx(
+              "flex items-center gap-2 text-sm font-medium transition-colors",
+              scrolled ? "text-onyx/75 hover:text-onyx" : "text-white/85 hover:text-white"
+            )}
+          >
+            <Phone size={15} />
+            {CONTACT.phoneDisplay}
+          </a>
           <Button
             href="#security-audit"
             variant={scrolled ? "primary" : "solid-ivory"}
             className="py-3 text-[0.8rem]"
             onClick={() => trackEvent("hero_cta_click", { source: "navbar" })}
           >
-            Book Security Audit
+            Book a Security Audit
           </Button>
         </div>
 

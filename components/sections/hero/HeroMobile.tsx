@@ -1,169 +1,105 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
-import { ArchitecturalSceneMobile } from "./ArchitecturalSceneMobile";
-import { HeroSignal } from "./HeroSignal";
-import { Button } from "../../Button";
-import { EASE_PREMIUM } from "./motion-utils";
-import { trackEvent } from "@/lib/analytics";
-
-const TRUST_ITEMS = ["CCTV", "AI SURVEILLANCE", "ACCESS CONTROL", "MONITORING", "AMC"];
-
-const copyVariants = {
-  hidden: { opacity: 0, y: 22 },
-  shown: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, delay: i * 0.08, ease: EASE_PREMIUM },
-  }),
-};
+import { useRef, useState } from "react";
+import { ArrowDown } from "lucide-react";
+import Image from "next/image";
+import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { PropertyScene } from "./PropertyScene";
+import { JourneyIndicator } from "./JourneyIndicator";
+import { HeroCopy } from "./HeroCopy";
+import { Container } from "../../Container";
+import { bump, riseAndHold } from "./motion-utils";
+import heroProperty from "@/public/images/hero-property.webp";
 
 /**
- * Mobile gets the same Security Layer story, told on a timer instead of via
- * a pinned scroll — no scroll-jacking on a touch device. It plays once on
- * arrival and settles into ordinary document flow.
+ * Mobile keeps the same real photo and the same Security Layer story, but
+ * as its own composition rather than a shrunk desktop layout: the brand
+ * message reads first in normal flow (no text-over-photo legibility risk),
+ * then a shorter pinned block carries the SCAN → PROTECT sequence on an
+ * image crop biased toward the gate/driveway/perimeter — the side of the
+ * photo the security markers actually live on.
  */
 export function HeroMobile() {
-  const reduceMotion = useReducedMotion();
-  const fov = useMotionValue(0);
-  const zoneB = useMotionValue(0);
-  const blind = useMotionValue(0);
-  const zoneA = useMotionValue(0);
-  const recede = useMotionValue(0);
-  const [revealed, setRevealed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-  // The signal readout belongs to the scene, not the headline takeover —
-  // fade it out as the scene recedes so it never collides with the copy.
-  const blindSignalOpacity = useTransform([blind, recede], ([b, r]: number[]) => b * (1 - r));
-  const zoneASignalOpacity = useTransform([zoneA, recede], ([z, r]: number[]) => z * (1 - r));
+  const scan = useTransform(scrollYProgress, (v) => bump(v, 0, 0.16, 0.16, 0.2));
+  const camera = useTransform(scrollYProgress, (v) => riseAndHold(v, 0, 0.06));
+  const zoneB = useTransform(scrollYProgress, (v) => riseAndHold(v, 0.22, 0.36));
+  const zoneA = useTransform(scrollYProgress, (v) => riseAndHold(v, 0.28, 0.42));
+  const blind = useTransform(scrollYProgress, (v) => riseAndHold(v, 0.46, 0.58));
+  const optimize = useTransform(scrollYProgress, (v) => riseAndHold(v, 0.68, 0.8));
 
-  useEffect(() => {
-    if (reduceMotion) {
-      fov.set(0);
-      zoneB.set(1);
-      blind.set(0);
-      zoneA.set(1);
-      recede.set(1);
-      setRevealed(true);
-      return;
-    }
+  const lineWidth = useTransform(scrollYProgress, (v) => `${v * 100}%`);
+  const cueOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
 
-    const controls = [
-      animate(fov, [0, 1, 1, 0], { duration: 1.8, times: [0, 0.3, 0.55, 1], delay: 0.2, ease: "easeInOut" }),
-      animate(zoneB, [0, 1], { duration: 1, delay: 1.3, ease: "easeOut" }),
-      animate(blind, [0, 1, 1, 0], { duration: 1.8, times: [0, 0.3, 0.6, 1], delay: 2.6, ease: "easeInOut" }),
-      animate(zoneA, [0, 1], { duration: 1, delay: 4.1, ease: "easeOut" }),
-      animate(recede, [0, 1], {
-        duration: 1,
-        delay: 5,
-        ease: "easeOut",
-        onComplete: () => setRevealed(true),
-      }),
-    ];
-
-    return () => controls.forEach((c) => c.stop());
-  }, [reduceMotion, fov, zoneB, blind, zoneA, recede]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    if (v < 0.45) setActiveIndex(0);
+    else if (v < 0.65) setActiveIndex(1);
+    else if (v < 0.85) setActiveIndex(2);
+    else setActiveIndex(3);
+  });
 
   return (
-    <section className="relative flex min-h-[100svh] flex-col overflow-hidden bg-onyx lg:hidden">
-      <ArchitecturalSceneMobile fov={fov} zoneB={zoneB} blind={blind} zoneA={zoneA} recede={recede} className="absolute inset-0" />
+    <div className="lg:hidden">
+      <section className="relative flex min-h-[92svh] flex-col justify-center overflow-hidden bg-onyx px-6 pb-14 pt-28">
+        <Image
+          src={heroProperty}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          quality={60}
+          style={{ objectFit: "cover", objectPosition: "80% center" }}
+          className="pointer-events-none select-none opacity-25"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-onyx via-onyx/80 to-onyx" />
+        <HeroCopy ctaSource="hero_mobile" className="relative" />
+      </section>
 
-      <div className="absolute left-6 top-[31%] flex flex-col gap-2.5">
-        <motion.div style={{ opacity: blindSignalOpacity }}>
-          <HeroSignal label="Blind Spot Detected" tone="alert" />
-        </motion.div>
-        <motion.div style={{ opacity: zoneASignalOpacity }} className="-mt-8">
-          <HeroSignal label="Coverage Optimized" tone="positive" />
-        </motion.div>
-      </div>
+      <section ref={ref} className="relative bg-onyx" style={{ height: "180vh" }}>
+        <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden bg-onyx">
+          {/* A defined image block, not an edge-to-edge bleed: mobile's tall,
+              narrow viewport would otherwise force a "cover" crop so severe
+              the gate/driveway/blind-spot markers fall out of frame entirely. */}
+          <div className="relative h-[64svh] shrink-0 overflow-hidden">
+            <PropertyScene
+              camera={camera}
+              zoneA={zoneA}
+              zoneB={zoneB}
+              blind={blind}
+              optimize={optimize}
+              scan={scan}
+              viewBox="780 40 850 861"
+              objectPosition="72% center"
+              className="absolute inset-0"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-onyx to-transparent" />
+          </div>
 
-      <div className="relative mt-auto px-6 pb-14 pt-32">
-        <motion.p
-          custom={0}
-          initial="hidden"
-          animate={revealed ? "shown" : "hidden"}
-          variants={copyVariants}
-          className="eyebrow mb-5 text-clay-light"
-        >
-          Intelligent Security Technology
-        </motion.p>
-
-        <h1>
-          <motion.span
-            custom={1}
-            initial="hidden"
-            animate={revealed ? "shown" : "hidden"}
-            variants={copyVariants}
-            className="block font-serif text-4xl leading-[1.05] text-white"
-          >
-            You don&rsquo;t need more cameras.
-          </motion.span>
-          <motion.span
-            custom={2}
-            initial="hidden"
-            animate={revealed ? "shown" : "hidden"}
-            variants={copyVariants}
-            className="mt-1 block font-serif text-5xl italic leading-[1.02] text-clay-light"
-          >
-            You need fewer blind spots.
-          </motion.span>
-        </h1>
-
-        <motion.p
-          custom={3}
-          initial="hidden"
-          animate={revealed ? "shown" : "hidden"}
-          variants={copyVariants}
-          className="mt-6 max-w-sm text-base leading-relaxed text-white/70"
-        >
-          3NETRA identifies security gaps, designs the right protection system and
-          keeps it working beyond installation.
-        </motion.p>
-
-        <motion.div
-          custom={4}
-          initial="hidden"
-          animate={revealed ? "shown" : "hidden"}
-          variants={copyVariants}
-          className="mt-8 flex flex-col items-start gap-5"
-        >
-          <Button
-            href="#security-audit"
-            variant="solid-ivory"
-            className="w-full justify-center sm:w-auto"
-            onClick={() => trackEvent("hero_cta_click", { source: "hero_primary_mobile" })}
-          >
-            Book a Security Audit
-          </Button>
-          <Button
-            href="#security-audit"
-            variant="underline-light"
-            withArrow={false}
-            onClick={() => trackEvent("hero_cta_click", { source: "hero_secondary_mobile" })}
-          >
-            Tell Us Your Security Problem
-          </Button>
-        </motion.div>
-
-        <motion.div
-          custom={5}
-          initial="hidden"
-          animate={revealed ? "shown" : "hidden"}
-          variants={copyVariants}
-          className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/10 pt-5"
-        >
-          {TRUST_ITEMS.map((item, i) => (
-            <span
-              key={item}
-              className="flex items-center gap-4 text-[0.62rem] font-semibold tracking-widest2 text-white/40"
+          <Container className="relative flex flex-1 flex-col justify-center gap-6">
+            <motion.button
+              type="button"
+              onClick={() => window.scrollBy({ top: window.innerHeight * 0.5, behavior: "smooth" })}
+              style={{ opacity: cueOpacity }}
+              className="flex items-center gap-3"
+              aria-label="Scroll to see how 3NETRA eliminates blind spots"
             >
-              {item}
-              {i < TRUST_ITEMS.length - 1 && <span className="h-1 w-1 rounded-full bg-white/25" />}
-            </span>
-          ))}
-        </motion.div>
-      </div>
-    </section>
+              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/30 text-white/80">
+                <ArrowDown size={13} />
+              </span>
+              <span className="text-[0.6rem] font-semibold uppercase leading-tight tracking-widest2 text-white/55">
+                Scroll to see how 3NETRA
+                <br />
+                eliminates blind spots
+              </span>
+            </motion.button>
+
+            <JourneyIndicator activeIndex={activeIndex} lineWidth={lineWidth} />
+          </Container>
+        </div>
+      </section>
+    </div>
   );
 }

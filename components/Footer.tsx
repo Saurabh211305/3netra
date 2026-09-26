@@ -26,7 +26,7 @@ export function Footer() {
       <Container>
         <div className="grid gap-14 lg:grid-cols-[1.3fr_2fr]">
           <div>
-            <Logo tone="light" />
+            <Logo />
             <p className="eyebrow mt-6 text-white/40">
               Intelligent Security.
               <br />
