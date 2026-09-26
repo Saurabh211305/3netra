@@ -35,16 +35,15 @@ export function PropertyScene({
 }) {
   const cameraOpacity = useTransform(camera, (v) => v * 0.9);
 
-  const zoneAOpacity = useTransform(zoneA, (v) => v * 0.34);
-  const zoneALabelOpacity = useTransform(zoneA, (v) => v);
+  // One bold coverage beam (zoneA/zoneB still drive it in a soft cascade —
+  // whichever has risen further wins — so callers don't need to change
+  // their staggered timing to get a single merged shape).
+  const coverageOpacity = useTransform([zoneA, zoneB], ([a, b]: number[]) => Math.max(a, b) * 0.42);
 
-  const zoneBOpacity = useTransform(zoneB, (v) => v * 0.34);
-  const zoneBLabelOpacity = useTransform(zoneB, (v) => v);
-
-  // Blind-spot brackets fade in, then hand off to the optimized wash.
+  // Blind-spot marker fades in, then hands off to the optimized wash.
   const blindOpacity = useTransform([blind, optimize], ([b, o]: number[]) => b * (1 - o));
   const optimizeOpacity = useTransform(optimize, (v) => v);
-  const optimizeWashOpacity = useTransform(optimize, (v) => v * 0.3);
+  const optimizeWashOpacity = useTransform(optimize, (v) => v * 0.32);
 
   const scanY = useTransform(scan, [0, 1], [70, 860]);
   const scanOpacity = useTransform(scan, [0, 0.15, 0.85, 1], [0, 0.85, 0.85, 0]);
@@ -91,58 +90,43 @@ export function PropertyScene({
           <circle cx="30" cy="7.5" r="5.5" fill="none" stroke="#F7F4EF" strokeWidth="1.8" />
         </motion.g>
 
-        {/* CAM 02 — Driveway coverage */}
+        {/* CAMERA COVERAGE — one bold beam from the mount across the
+            driveway and gate, stopping short of the blind-spot box
+            (x < 1180) so the two never visually contradict each other. */}
         <motion.polygon
-          points="905,545 1110,548 1130,652 878,652"
-          fill="#0F3D3A"
-          stroke="#8FBBB6"
-          strokeWidth="1.25"
-          style={{ opacity: zoneBOpacity }}
+          points="1195,457 650,830 1150,830"
+          fill="#17534F"
+          stroke="#A9D2CB"
+          strokeWidth="1.5"
+          style={{ opacity: coverageOpacity }}
         />
-        <motion.g style={{ opacity: zoneBLabelOpacity }}>
-          <rect x="878" y="503" width="205" height="34" rx="3" fill="#111111" opacity="0.72" />
-          <circle cx="896" cy="520" r="3.5" fill="#17534F" />
-          <text x="910" y="525" fontSize="13" letterSpacing="0.5" fill="#F7F4EF">
-            CAM 02 · DRIVEWAY
-          </text>
-        </motion.g>
-
-        {/* CAM 01 — Front entry coverage */}
-        <motion.polygon
-          points="985,612 1120,612 1160,825 865,825"
-          fill="#0F3D3A"
-          stroke="#8FBBB6"
-          strokeWidth="1.25"
-          style={{ opacity: zoneAOpacity }}
-        />
-        <motion.g style={{ opacity: zoneALabelOpacity }}>
-          <rect x="865" y="573" width="225" height="34" rx="3" fill="#111111" opacity="0.72" />
-          <circle cx="883" cy="590" r="3.5" fill="#17534F" />
-          <text x="897" y="595" fontSize="13" letterSpacing="0.5" fill="#F7F4EF">
-            CAM 01 · FRONT ENTRY
-          </text>
-        </motion.g>
 
         {/* BLIND SPOT — exterior perimeter wall, right of the gate.
             Kept inside x:[180,1500] — the crop window that survives a
             "slice" fit at both the widest (ultrawide) and narrowest
             (near-square) desktop viewports we support. */}
         <motion.g style={{ opacity: blindOpacity }}>
-          {[
-            "M1180,410 L1180,380 L1210,380",
-            "M1470,380 L1500,380 L1500,410",
-            "M1500,690 L1500,720 L1470,720",
-            "M1210,720 L1180,720 L1180,690",
-          ].map((d) => (
-            <path key={d} d={d} fill="none" stroke="#B07878" strokeWidth="2.5" />
-          ))}
-          <circle cx="1180" cy="378" r="4.5" fill="#B07878" />
-          <line x1="1180" y1="378" x2="1150" y2="345" stroke="#B07878" strokeWidth="1.5" />
-          <rect x="990" y="305" width="165" height="46" rx="3" fill="#111111" opacity="0.78" />
-          <text x="1006" y="325" fontSize="12.5" letterSpacing="0.8" fill="#B07878" fontWeight="600">
+          <rect
+            x="1180"
+            y="380"
+            width="320"
+            height="340"
+            rx="6"
+            fill="none"
+            stroke="#B07878"
+            strokeWidth="2"
+            strokeDasharray="9 6"
+          />
+          <line x1="1180" y1="380" x2="1143" y2="343" stroke="#B07878" strokeWidth="1.5" />
+          <circle cx="1132" cy="332" r="12" fill="#C0554F" />
+          <text x="1132" y="337" fontSize="15" fontWeight="700" fill="#F7F4EF" textAnchor="middle">
+            !
+          </text>
+          <rect x="1152" y="313" width="150" height="40" rx="3" fill="#111111" opacity="0.82" />
+          <text x="1166" y="332" fontSize="12.5" letterSpacing="0.8" fill="#F7F4EF" fontWeight="600">
             BLIND SPOT
           </text>
-          <text x="1006" y="342" fontSize="12.5" letterSpacing="0.8" fill="#F7F4EF" fontWeight="600">
+          <text x="1166" y="348" fontSize="12.5" letterSpacing="0.8" fill="#D99C8A" fontWeight="600">
             DETECTED
           </text>
         </motion.g>
@@ -160,13 +144,14 @@ export function PropertyScene({
           style={{ opacity: optimizeWashOpacity }}
         />
         <motion.g style={{ opacity: optimizeOpacity }}>
-          <circle cx="1180" cy="378" r="4.5" fill="#17534F" />
-          <line x1="1180" y1="378" x2="1150" y2="345" stroke="#17534F" strokeWidth="1.5" />
-          <rect x="955" y="305" width="200" height="46" rx="3" fill="#111111" opacity="0.78" />
-          <text x="971" y="325" fontSize="12.5" letterSpacing="0.8" fill="#F7F4EF" fontWeight="600">
+          <line x1="1180" y1="380" x2="1143" y2="343" stroke="#17534F" strokeWidth="1.5" />
+          <circle cx="1132" cy="332" r="12" fill="#17534F" />
+          <path d="M1126,332 L1130,337 L1139,326" fill="none" stroke="#F7F4EF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="1152" y="313" width="185" height="40" rx="3" fill="#111111" opacity="0.82" />
+          <text x="1166" y="332" fontSize="12.5" letterSpacing="0.8" fill="#F7F4EF" fontWeight="600">
             SECURITY COVERAGE
           </text>
-          <text x="971" y="342" fontSize="12.5" letterSpacing="0.8" fill="#8FBBB6" fontWeight="600">
+          <text x="1166" y="348" fontSize="12.5" letterSpacing="0.8" fill="#8FBBB6" fontWeight="600">
             OPTIMIZED
           </text>
         </motion.g>

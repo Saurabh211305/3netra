@@ -6,9 +6,9 @@ import { EASE_PREMIUM } from "./motion-utils";
 import { trackEvent } from "@/lib/analytics";
 
 const STATS = [
-  { value: "06", label: "Security Stages" },
-  { value: "24/7", label: "System Monitoring" },
-  { value: "01", label: "Security Audit" },
+  { value: "500+", label: "Properties Secured" },
+  { value: "99.9%", label: "Uptime & Monitoring" },
+  { value: "40%", label: "Fewer Security Risks" },
 ];
 
 const copyVariants = {
@@ -103,12 +103,12 @@ export function HeroCopy({ ctaSource, className }: { ctaSource: string; classNam
         initial="hidden"
         animate="shown"
         variants={copyVariants}
-        className="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-white/10 pt-6"
+        className="mt-10 flex flex-wrap gap-x-7 gap-y-4 border-t border-white/10 pt-6"
       >
         {STATS.map((stat) => (
           <div key={stat.label}>
             <p className="font-serif text-2xl text-white">{stat.value}</p>
-            <p className="mt-0.5 text-[0.65rem] uppercase tracking-widest2 text-white/45">
+            <p className="mt-0.5 whitespace-nowrap text-[0.6rem] uppercase tracking-[0.14em] text-white/45">
               {stat.label}
             </p>
           </div>
