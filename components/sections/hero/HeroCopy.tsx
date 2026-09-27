@@ -5,12 +5,6 @@ import { Button } from "../../Button";
 import { EASE_PREMIUM } from "./motion-utils";
 import { trackEvent } from "@/lib/analytics";
 
-const STATS = [
-  { value: "500+", label: "Properties Secured" },
-  { value: "99.9%", label: "Uptime & Monitoring" },
-  { value: "40%", label: "Fewer Security Risks" },
-];
-
 const copyVariants = {
   hidden: { opacity: 0, y: 22 },
   shown: (i: number) => ({
@@ -22,9 +16,11 @@ const copyVariants = {
 
 /**
  * The hero's brand message. Unlike the security visualization, this column
- * does not wait on scroll — the brief's own reference layout keeps it
- * visible throughout the whole SCAN → PROTECT sequence, alongside the
- * photo, not gated behind it.
+ * does not wait on scroll — it renders immediately and stays visible
+ * throughout the whole SCAN → PROTECT sequence, alongside the photo. No
+ * stats row: the journey indicator (01 SCAN…04 PROTECT) already carries
+ * whatever supporting information the hero needs, and any stat here would
+ * be an unverified claim.
  */
 export function HeroCopy({ ctaSource, className }: { ctaSource: string; className?: string }) {
   return (
@@ -34,7 +30,7 @@ export function HeroCopy({ ctaSource, className }: { ctaSource: string; classNam
         initial="hidden"
         animate="shown"
         variants={copyVariants}
-        className="eyebrow mb-5 text-white/60"
+        className="eyebrow mb-6 text-white/60"
       >
         Intelligent Surveillance
         <br />
@@ -47,7 +43,7 @@ export function HeroCopy({ ctaSource, className }: { ctaSource: string; classNam
           initial="hidden"
           animate="shown"
           variants={copyVariants}
-          className="block font-serif text-4xl leading-[1.05] text-white sm:text-5xl lg:text-display-2"
+          className="block font-serif text-4xl leading-[1.05] text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.35)] sm:text-5xl lg:text-display-2"
         >
           You don&rsquo;t need more cameras.
         </motion.span>
@@ -56,7 +52,7 @@ export function HeroCopy({ ctaSource, className }: { ctaSource: string; classNam
           initial="hidden"
           animate="shown"
           variants={copyVariants}
-          className="mt-1 block font-serif text-4xl italic leading-[1.05] text-clay-light sm:text-5xl lg:text-display-2"
+          className="mt-1 block font-serif text-4xl italic leading-[1.05] text-clay-light [text-shadow:0_2px_16px_rgba(0,0,0,0.35)] sm:text-5xl lg:text-display-2"
         >
           You need fewer blind spots.
         </motion.span>
@@ -67,7 +63,7 @@ export function HeroCopy({ ctaSource, className }: { ctaSource: string; classNam
         initial="hidden"
         animate="shown"
         variants={copyVariants}
-        className="mt-6 max-w-sm text-base leading-relaxed text-white/70"
+        className="mt-8 max-w-sm text-base leading-relaxed text-white/70"
       >
         3NETRA identifies security gaps, designs the right protection system and
         keeps it working beyond installation.
@@ -78,11 +74,11 @@ export function HeroCopy({ ctaSource, className }: { ctaSource: string; classNam
         initial="hidden"
         animate="shown"
         variants={copyVariants}
-        className="mt-8 flex flex-wrap items-center gap-4"
+        className="mt-12 flex flex-wrap items-center gap-5"
       >
         <Button
           href="#security-audit"
-          variant="solid-ivory"
+          variant="solid-rose"
           className="w-full justify-center sm:w-auto"
           onClick={() => trackEvent("hero_cta_click", { source: `${ctaSource}_primary` })}
         >
@@ -96,23 +92,6 @@ export function HeroCopy({ ctaSource, className }: { ctaSource: string; classNam
         >
           Tell Us Your Security Problem
         </Button>
-      </motion.div>
-
-      <motion.div
-        custom={5}
-        initial="hidden"
-        animate="shown"
-        variants={copyVariants}
-        className="mt-10 flex flex-wrap gap-x-7 gap-y-4 border-t border-white/10 pt-6"
-      >
-        {STATS.map((stat) => (
-          <div key={stat.label}>
-            <p className="font-serif text-2xl text-white">{stat.value}</p>
-            <p className="mt-0.5 whitespace-nowrap text-[0.6rem] uppercase tracking-[0.14em] text-white/45">
-              {stat.label}
-            </p>
-          </div>
-        ))}
       </motion.div>
     </div>
   );

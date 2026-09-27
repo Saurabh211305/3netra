@@ -32,6 +32,7 @@ export function HeroMobile() {
 
   const lineWidth = useTransform(scrollYProgress, (v) => `${v * 100}%`);
   const cueOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -24]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   useMotionValueEvent(scrollYProgress, "change", (v) => {
@@ -52,9 +53,9 @@ export function HeroMobile() {
           sizes="100vw"
           quality={60}
           style={{ objectFit: "cover", objectPosition: "80% center" }}
-          className="pointer-events-none select-none opacity-25"
+          className="pointer-events-none select-none opacity-30"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-onyx via-onyx/80 to-onyx" />
+        <div className="absolute inset-0 bg-gradient-to-b from-onyx/92 via-onyx/65 to-onyx/92" />
         <HeroCopy ctaSource="hero_mobile" className="relative" />
       </section>
 
@@ -64,17 +65,19 @@ export function HeroMobile() {
               narrow viewport would otherwise force a "cover" crop so severe
               the gate/driveway/blind-spot markers fall out of frame entirely. */}
           <div className="relative h-[64svh] shrink-0 overflow-hidden">
-            <PropertyScene
-              camera={camera}
-              zoneA={zoneA}
-              zoneB={zoneB}
-              blind={blind}
-              optimize={optimize}
-              scan={scan}
-              viewBox="780 40 850 861"
-              objectPosition="72% center"
-              className="absolute inset-0"
-            />
+            <motion.div className="absolute -inset-y-8 inset-x-0" style={{ y: parallaxY }}>
+              <PropertyScene
+                camera={camera}
+                zoneA={zoneA}
+                zoneB={zoneB}
+                blind={blind}
+                optimize={optimize}
+                scan={scan}
+                viewBox="780 40 850 861"
+                objectPosition="72% center"
+                className="absolute inset-0"
+              />
+            </motion.div>
             <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-onyx to-transparent" />
           </div>
 

@@ -36,9 +36,9 @@ export function HeroStatic() {
           className="absolute inset-0"
         />
 
-        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-onyx/75 to-transparent" />
-        <div className="absolute inset-y-0 left-0 w-full max-w-2xl bg-gradient-to-r from-onyx/88 via-onyx/45 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-onyx/85 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-onyx/55 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-full max-w-2xl bg-gradient-to-r from-onyx/40 via-onyx/12 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-onyx/60 to-transparent" />
 
         <Container className="relative flex h-full flex-1 flex-col justify-center pb-24 pt-20">
           <HeroCopy ctaSource="hero_static_desktop" className="max-w-xl" />
@@ -51,7 +51,7 @@ export function HeroStatic() {
 
       <div className="lg:hidden">
         <section className="relative flex min-h-[92svh] flex-col justify-center overflow-hidden bg-onyx px-6 pb-14 pt-28">
-          <div className="absolute inset-0 bg-gradient-to-b from-onyx via-onyx/80 to-onyx" />
+          <div className="absolute inset-0 bg-gradient-to-b from-onyx/92 via-onyx/65 to-onyx/92" />
           <HeroCopy ctaSource="hero_static_mobile" className="relative" />
         </section>
 

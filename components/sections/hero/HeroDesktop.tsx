@@ -22,6 +22,7 @@ export function HeroDesktop() {
 
   const lineWidth = useTransform(scrollYProgress, (v) => `${v * 100}%`);
   const cueOpacity = useTransform(scrollYProgress, [0, 0.04], [1, 0]);
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   useMotionValueEvent(scrollYProgress, "change", (v) => {
@@ -34,19 +35,21 @@ export function HeroDesktop() {
   return (
     <section ref={ref} className="relative hidden bg-onyx lg:block" style={{ height: "260vh" }}>
       <div className="sticky top-0 h-screen overflow-hidden">
-        <PropertyScene
-          camera={camera}
-          zoneA={zoneA}
-          zoneB={zoneB}
-          blind={blind}
-          optimize={optimize}
-          scan={scan}
-          className="absolute inset-0"
-        />
+        <motion.div className="absolute -inset-y-16 inset-x-0" style={{ y: parallaxY }}>
+          <PropertyScene
+            camera={camera}
+            zoneA={zoneA}
+            zoneB={zoneB}
+            blind={blind}
+            optimize={optimize}
+            scan={scan}
+            className="absolute inset-0"
+          />
+        </motion.div>
 
-        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-onyx/75 to-transparent" />
-        <div className="absolute inset-y-0 left-0 w-full max-w-2xl bg-gradient-to-r from-onyx/88 via-onyx/45 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-onyx/85 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-onyx/55 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-full max-w-2xl bg-gradient-to-r from-onyx/40 via-onyx/12 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-onyx/60 to-transparent" />
 
         <Container className="relative flex h-full flex-col justify-center pb-24 pt-20">
           <HeroCopy ctaSource="hero_desktop" className="max-w-xl" />

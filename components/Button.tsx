@@ -10,6 +10,7 @@ type Variant =
   | "ghost-dark"
   | "ghost-light"
   | "solid-ivory"
+  | "solid-rose"
   | "underline-light";
 
 const base =
@@ -24,6 +25,8 @@ const variants: Record<Variant, string> = {
     "rounded-full px-7 py-3.5 border border-white/35 text-white hover:border-white hover:bg-white hover:text-onyx",
   /* Editorial, non-pill treatments reserved for the cinematic hero. */
   "solid-ivory": "rounded-[2px] px-8 py-4 bg-pearl text-onyx hover:bg-white",
+  "solid-rose":
+    "rounded-[2px] px-8 py-4 bg-clay text-pearl hover:bg-clay-light",
   "underline-light":
     "rounded-none border-b border-white/40 px-0 py-2 text-white hover:border-white",
 };

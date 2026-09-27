@@ -22,6 +22,7 @@ export function Hero() {
     return (
       <div id="top">
         <HeroStatic />
+        <div id="hero-sentinel" aria-hidden="true" />
       </div>
     );
   }
@@ -30,6 +31,14 @@ export function Hero() {
     <div id="top">
       <HeroDesktop />
       <HeroMobile />
+      {/* Both hero variants end in a 100svh sticky viewport that releases
+          into normal flow one screen-height before the tall scroll-track's
+          own end — pulling the sentinel up by the same 100svh lands its top
+          edge exactly at that release point, on both breakpoints, without
+          hardcoding either variant's track height. A sentinel placed at the
+          track's literal end (net 0 offset) would fire ~100vh too late,
+          leaving the navbar transparent over already-visible page content. */}
+      <div id="hero-sentinel" aria-hidden="true" style={{ height: "100svh", marginTop: "-100svh" }} />
     </div>
   );
 }

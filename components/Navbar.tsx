@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { label: "Technology", href: "#intelligent-surveillance" },
   { label: "Our Approach", href: "#process" },
   { label: "Resources", href: "#security-audit" },
+  { label: "Contact", href: "#security-audit" },
 ];
 
 export function Navbar() {
@@ -23,10 +24,33 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    // The hero is a full-bleed cinematic scene, not a strip behind the nav —
+    // the nav should stay transparent for the whole pinned hero sequence and
+    // only pick up a solid background once the visitor has actually scrolled
+    // past it. A fixed scrollY threshold would flip it within the first few
+    // pixels of the (very tall, pinned) hero, recreating the hard seam this
+    // pass exists to remove.
+    //
+    // The sentinel node is looked up fresh on every call rather than cached:
+    // Hero mounts a static fallback tree first and swaps it for the animated
+    // one on its next render, which replaces the sentinel DOM node. A cached
+    // reference from this effect's first run would point at the discarded
+    // static-tree node forever.
+    const onScroll = () => {
+      const sentinel = document.getElementById("hero-sentinel");
+      if (sentinel) {
+        setScrolled(sentinel.getBoundingClientRect().top <= 0);
+      } else {
+        setScrolled(window.scrollY > 24);
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -47,10 +71,10 @@ export function Navbar() {
     >
       <Container className="flex h-20 items-center justify-between">
         <a href="#top" aria-label="3NETRA home">
-          <Logo />
+          <Logo tone={scrolled ? "natural" : "white"} />
         </a>
 
-        <nav aria-label="Primary" className="hidden items-center gap-9 lg:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
@@ -79,7 +103,7 @@ export function Navbar() {
           </a>
           <Button
             href="#security-audit"
-            variant={scrolled ? "primary" : "solid-ivory"}
+            variant={scrolled ? "primary" : "solid-rose"}
             className="py-3 text-[0.8rem]"
             onClick={() => trackEvent("hero_cta_click", { source: "navbar" })}
           >
